@@ -1,0 +1,5 @@
+(executable
+  (name test)
+  (libraries monolith patricia)
+  (enabled_if (= %{profile} dev))
+)

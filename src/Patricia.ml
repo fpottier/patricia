@@ -434,9 +434,18 @@ let rec map f t =
   | Empty ->
       Empty
   | Leaf (k, d) ->
-      Leaf(k, f d)
+      Leaf (k, f d)
   | Branch (p, m, t0, t1) ->
       Branch (p, m, map f t0, map f t1)
+
+let rec mapi f t =
+  match t with
+  | Empty ->
+      Empty
+  | Leaf (k, d) ->
+      Leaf (k, f k d)
+  | Branch (p, m, t0, t1) ->
+      Branch (p, m, mapi f t0, mapi f t1)
 
 let rec equal eq s t =
   match s, t with

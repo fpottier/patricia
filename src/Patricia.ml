@@ -16,6 +16,15 @@
 
 (* -------------------------------------------------------------------------- *)
 
+(* We write every runtime assertion in the form [if debug then assert (...)]
+   so it is easy to turn off assertions just by setting [debug] to false. We
+   set [debug] to true here (so assertions are enabled while testing) and set
+   it to false when exporting to Menhir. *)
+
+let debug = true
+
+(* -------------------------------------------------------------------------- *)
+
 (* Basic operations on integers. *)
 
 let[@inline] lowest_bit x =
@@ -45,7 +54,7 @@ let[@inline] fill_down s =
 (* A more efficient implementation of [highest_bit]. *)
 
 let[@inline] highest_bit s =
-  assert (s <> 0);
+  if debug then assert (s <> 0);
   if s < 0 then min_int else
   (* We proceed as follows. First, we compute [fill_down s], whose bit pattern
      is a nonempty sequence of 0's followed with a nonempty sequence of 1's.
@@ -86,9 +95,9 @@ let rec is_mask m =
    least one, since [i0] and [i1] are distinct.) *)
 
 let[@inline] branching_bit (i0 : int) (i1 : int) : mask =
-  assert (i0 <> i1);
+  if debug then assert (i0 <> i1);
   let m = highest_bit (i0 lxor i1) in
-  assert (is_mask m);
+  if debug then assert (is_mask m);
   m
 
 (* [mask i m] returns an integer [i'], where all bits that [m] says are
@@ -102,7 +111,7 @@ let[@inline] branching_bit (i0 : int) (i1 : int) : mask =
 (* Miraculously, if [m] is [min_int] then [mask i m] is zero, as desired. *)
 
 let[@inline] mask (i : int) (m : mask) : int =
-  assert (is_mask m);
+  if debug then assert (is_mask m);
   i land (lnot (m lsl 1 - 1))
 
 (* [shorter m1 m2] is [true] iff [m1] describes a shorter prefix than [m2],
@@ -121,8 +130,8 @@ let[@inline] mask (i : int) (m : mask) : int =
 (* If we had an unsigned integer comparison, we could use it. *)
 
 let[@inline] shorter (m1 : mask) (m2 : mask) : bool =
-  assert (is_mask m1);
-  assert (is_mask m2);
+  if debug then assert (is_mask m1);
+  if debug then assert (is_mask m2);
   m2 > 0 && (m1 < 0 || m1 > m2)
 
 (* [match_prefix k p m] returns [true] if and only if the key [k] has prefix
@@ -132,8 +141,8 @@ let[@inline] shorter (m1 : mask) (m2 : mask) : bool =
    are set to zero. This is expressed by the equation [mask p m = p]. *)
 
 let[@inline] match_prefix k p m =
-  assert (is_mask m);
-  assert (mask p m = p);
+  if debug then assert (is_mask m);
+  if debug then assert (mask p m = p);
   mask k m = p
 
 (* -------------------------------------------------------------------------- *)
@@ -247,16 +256,16 @@ let mem k m =
    we can merge them just by creating a [Branch] node. *)
 
 let[@inline] join p0 t0 p1 t1 =
-  assert (not (is_empty t0));
-  assert (not (is_empty t1));
-  assert (p0 <> p1);
+  if debug then assert (not (is_empty t0));
+  if debug then assert (not (is_empty t1));
+  if debug then assert (p0 <> p1);
   let m = branching_bit p0 p1 in
   (* The prefixes agree up to bit [m], where the difference appears. *)
-  assert (mask p0 m = mask p1 m);
+  if debug then assert (mask p0 m = mask p1 m);
   (* The union of [t0] and [t1] has longest common prefix [p]. *)
   let p = mask p0 m in
-  assert (all_keys_have_prefix p m t0);
-  assert (all_keys_have_prefix p m t1);
+  if debug then assert (all_keys_have_prefix p m t0);
+  if debug then assert (all_keys_have_prefix p m t1);
   (* Therefore we must build a node of the form [Branch (p, m, _, _)]. *)
   if p0 land m = 0 then
     Branch (p, m, t0, t1)

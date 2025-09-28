@@ -157,4 +157,8 @@ CLIENT := $(HOME)/dev/menhir
 vendor:
 # Copy the files of interest into Menhir's working directory.
 	@ cp -f src/Patricia.{ml,mli} $(CLIENT)/base/
-	@ cd $(CLIENT) && headache -h $(CLIENT)/headers/regular-header base/Patricia.{ml,mli}
+	@ cd $(CLIENT) && \
+	  headache -h $(CLIENT)/headers/regular-header base/Patricia.{ml,mli} && \
+	  cd base && \
+	  sed -i.bak -e 's/let debug = true/let debug = false/g' Patricia.ml && \
+	  rm -f Patricia.ml.bak \

@@ -251,7 +251,7 @@ let mem k m =
 
 (* [join p0 t0 p1 t1] is a special case of [union]. We assume that the keys in
    the tree [t0] have longest common prefix [p0] and that the keys in the tree
-   [t1] have longest common prefix [p1]. Furthrmore, we assume that these
+   [t1] have longest common prefix [p1]. Furthermore, we assume that these
    prefixes disagree. Then, no matter how large the trees [t0] and [t1] are,
    we can merge them just by creating a [Branch] node. *)
 
@@ -464,6 +464,18 @@ let rec mapi f t =
       Leaf (k, f k d)
   | Branch (p, m, t0, t1) ->
       Branch (p, m, mapi f t0, mapi f t1)
+
+let rec filter f t =
+  match t with
+  | Empty ->
+      Empty
+  | Leaf (k, d) ->
+      if f k d then t else Empty
+  | Branch (_, _, t0, t1) ->
+      let t0' = filter f t0
+      and t1' = filter f t1 in
+      if t0 == t0' && t1 == t1' then t else
+      union t0' t1'
 
 let rec equal eq s t =
   match s, t with

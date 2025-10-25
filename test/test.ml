@@ -47,6 +47,16 @@ end
 
 (* -------------------------------------------------------------------------- *)
 
+(* Auxiliary functions. *)
+
+let () =
+  dprintf "          let even key data = (key + data) mod 2 = 0;;\n"
+
+let even_key_data key data =
+  (key + data) mod 2 = 0
+
+(* -------------------------------------------------------------------------- *)
+
 (* The abstract type of maps. *)
 
 let check _model =
@@ -155,6 +165,10 @@ let () =
   declare "cardinal" spec R.cardinal C.cardinal;
 
   (* [iter], [fold], [fold_rev], [exists], [map], [mapi] are not tested *)
+
+  let spec = map ^> map in
+  declare "filter even_key_data" spec
+    (R.filter even_key_data) (C.filter even_key_data);
 
   let spec = map ^> map ^> bool in
   declare "equal (=)" spec (R.equal (=)) (C.equal (=));

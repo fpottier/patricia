@@ -90,6 +90,10 @@ val map: ('a -> 'b) -> 'a t -> 'b t
    the map [m]. *)
 val mapi: (key -> 'a -> 'b) -> 'a t -> 'b t
 
+(**[filter f m] produces a map containing just the bindings of the map [m]
+   that satisfy the predicate [f]. *)
+val filter: (key -> 'a -> bool) -> 'a t -> 'a t
+
 (**[equal eq m1 m2] determines whether maps [m1] and [m2] are equal. The
    function [eq] is used to compare the values in the images of the maps. *)
 val equal: ('a -> 'b -> bool) -> 'a t -> 'b t -> bool

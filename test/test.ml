@@ -154,7 +154,7 @@ let () =
   let spec = map ^> int in
   declare "cardinal" spec R.cardinal C.cardinal;
 
-  (* [iter], [fold], [fold_rev], [map], [mapi] are not tested *)
+  (* [iter], [fold], [fold_rev], [exists], [map], [mapi] are not tested *)
 
   let spec = map ^> map ^> bool in
   declare "equal (=)" spec (R.equal (=)) (C.equal (=));

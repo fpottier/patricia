@@ -438,6 +438,15 @@ let rec fold_rev f t accu =
   | Branch (_, _, t0, t1) ->
       fold_rev f t0 (fold_rev f t1 accu)
 
+let rec exists f t =
+  match t with
+  | Empty ->
+      false
+  | Leaf (k, d) ->
+      f k d
+  | Branch (_, _, t0, t1) ->
+      exists f t0 || exists f t1
+
 let rec map f t =
   match t with
   | Empty ->

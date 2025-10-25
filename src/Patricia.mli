@@ -78,6 +78,10 @@ val fold: (key -> 'a -> 'b -> 'b) -> 'a t -> 'b -> 'b
    order of keys. *)
 val fold_rev: (key -> 'a -> 'b -> 'b) -> 'a t -> 'b -> 'b
 
+(**[exists f m] checks whether at least one binding in the map [m] satisfies
+   the predicate [f]. *)
+val exists: (key -> 'a -> bool) -> 'a t -> bool
+
 (**[map f] applies the transformation [f] to the values contained in the map
    [m]. *)
 val map: ('a -> 'b) -> 'a t -> 'b t

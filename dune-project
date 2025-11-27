@@ -13,7 +13,7 @@
   (maintenance_intent "(latest)")
   (depends
     (ocaml (>= 4.14))
-    (monolith :with-test)
+    (monolith (and :with-test (>= 20241126)))
     (ocamlfind :with-test)
   )
 )

@@ -410,6 +410,17 @@ let rec union s t =
         (* The prefixes disagree. *)
         join p s q t
 
+(* If we write [iter] in the most natural way, by traversing a tree
+   from left to right, then we find the positive keys first and the
+   negative keys later, because the positive keys have sign bit 0
+   and the negative keys have sign bit 1. To compensate for this,
+   at the outermost layer, we test if the mask is [min_int], which
+   is [branching_bit 0 (-1)]. If so, we enumerate the right child
+   first and the left child next. *)
+
+let () =
+  assert (branching_bit 0 (-1) = min_int)
+
 let rec iter f t =
   match t with
   | Empty ->
@@ -420,6 +431,17 @@ let rec iter f t =
       iter f t0;
       iter f t1
 
+let iter f t =
+  match t with
+  | Empty ->
+      ()
+  | Leaf (k, d) ->
+      f k d
+  | Branch (_, m, t0, t1) ->
+      if m = min_int
+      then (iter f t1; iter f t0)
+      else (iter f t0; iter f t1)
+
 let rec fold f t accu =
   match t with
   | Empty ->
@@ -429,6 +451,17 @@ let rec fold f t accu =
   | Branch (_, _, t0, t1) ->
       fold f t1 (fold f t0 accu)
 
+let fold f t accu =
+  match t with
+  | Empty ->
+      accu
+  | Leaf (k, d) ->
+      f k d accu
+  | Branch (_, m, t0, t1) ->
+      if m = min_int
+      then fold f t0 (fold f t1 accu)
+      else fold f t1 (fold f t0 accu)
+
 let rec fold_rev f t accu =
   match t with
   | Empty ->
@@ -437,6 +470,20 @@ let rec fold_rev f t accu =
       f k d accu
   | Branch (_, _, t0, t1) ->
       fold_rev f t0 (fold_rev f t1 accu)
+
+let fold_rev f t accu =
+  match t with
+  | Empty ->
+      accu
+  | Leaf (k, d) ->
+      f k d accu
+  | Branch (_, m, t0, t1) ->
+      if m = min_int
+      then fold_rev f t1 (fold_rev f t0 accu)
+      else fold_rev f t0 (fold_rev f t1 accu)
+
+let bindings t =
+  fold_rev (fun k d bs -> (k, d) :: bs) t []
 
 let rec exists f t =
   match t with

@@ -158,13 +158,25 @@ let () =
   let spec = map ^> map ^> map in
   declare "union" spec R.union C.union;
 
-  let spec = map ^!?> int *** value in
+  let spec = map ^!?> key *** value in
   declare "choose" spec R.choose C.choose;
 
   let spec = map ^> int in
   declare "cardinal" spec R.cardinal C.cardinal;
 
-  (* [iter], [fold], [fold_rev], [exists], [map], [mapi] are not tested *)
+  let spec = iteri (map ^> list (key *** value)) in
+  declare "iter" spec R.iter C.iter;
+
+  let spec = foldri (map ^> list (key *** value)) in
+  declare "fold" spec R.fold C.fold;
+
+  let spec = foldri (map ^> list (key *** value)) in
+  declare "fold_rev" spec R.fold_rev C.fold_rev;
+
+  let spec = map ^> list (key *** value) in
+  declare "bindings" spec R.bindings C.bindings;
+
+  (* [exists], [map], [mapi] are not tested *)
 
   let spec = map ^> map in
   declare "filter even_key_data" spec

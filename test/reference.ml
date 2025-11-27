@@ -78,3 +78,6 @@ let choose (m : int t) (candidate : (key * int, exn) result)
         "Candidate has raised %s." (Printexc.to_string e)))
   | _, Ok (k, cv) ->
       candidate_has_returned candidate m k cv
+
+let fold_rev f m accu =
+  List.fold_right (fun (k, d) accu -> f k d accu) (bindings m) accu
